@@ -1,0 +1,144 @@
+#include<iostream>
+#include<iomanip>
+#include<cstdlib>
+#include<string.h>
+#include<string>
+#include<math.h>
+
+using namespace std;
+
+class word{
+private:	
+	string savedWord;
+public:	
+	void setWord(string a);	
+	char* returnWord();
+	int getStringLength();
+	word(string hi);
+	word();
+};
+
+void word::setWord(string a){//Sets savedWord private variable to whatever is in the parameter 
+	savedWord = a;
+}
+
+char* word::returnWord(){//This function converts the string, savedWord, into a char*, and returns it
+	char *wordCopy = new char[savedWord.size() + 1];//Create a new character array that is the size of the savedWord + 1 so there's 
+	wordCopy[savedWord.size()] = 0;				    //room for the NULL character.
+	memcpy(wordCopy, savedWord.c_str(), savedWord.size());
+
+	return wordCopy;
+}
+
+word::word(string hi){//Function that sets savedWord to whatever is in the parameters
+	setWord(hi);	
+}
+
+word::word(){//"Default" case i.e. assigns "yo" to savedWord variable
+	setWord("yo");
+}
+
+int word::getStringLength(){  //Function that returns string length	
+	return strlen(returnWord());
+}
+
+bool Winner(char* word1, char* wordFromArray, int length){//Function checks whether you've won or not
+	for (int counter = 0; counter < length; counter++){
+		if (word1[counter] != wordFromArray[counter]){
+			return false; }
+	}	
+	cout << "You guessed the word!" << endl << endl;
+	return true;//Return true if all the letters match
+}
+
+void printWordplusBlanks(char* outputArray, int length){//Function that prints the word, including the letters you've guessed correctly
+	cout << endl << endl;
+	for (int counter = 0; counter < length; counter++){
+		if (outputArray[counter] != '-'){ ; }//Don't do anything if the letter spot has been filled
+		else	outputArray[counter] = '-';
+		cout << outputArray[counter];
+	}
+	cout << endl << endl;
+}
+
+void checkForMatches(char* outputArray, string word, char userGuess, int length, int *triesLeft){//Function that checks if the user's guess matches letters
+	bool matchFound = false;																     //in the array
+	for (int counter = 0; counter < length; counter++){						    
+		if (word[counter] == userGuess){
+			outputArray[counter] = userGuess;
+			matchFound = true;
+		}
+	}	
+	if (matchFound) *triesLeft += 1;//Increment triesLeft by one if the user's guess matched at least one letter in the word
+	printWordplusBlanks(outputArray, length);
+}
+
+int main(){
+
+	string newWord;//Variable for user input if he/she wants to create a new Word (max 26 total words)
+	int I = 10, A; //'I' keeps track of position in array, 'A' is variable used for user Input
+	word* array = new word[26];
+	array[0] = word("bat"), array[1] = word("dog"), array[2] = word("swag"), array[3] = word("suits"), array[4] = word("super");//Default 10 words
+	array[5] = word("class"),  array[6] = word("yellow"), array[7] = word("calculus"), array[8] = word("night"), array[9] = word("awesome");
+	
+	
+	beginning:
+	cout << "Welcome to Hangman" << endl << endl;//Main menu
+	do {
+		cout << "Enter a new word? (1)" << endl << endl << "Play a new game (2)? "<< endl << endl << "Press any other number to quit" << endl << endl;
+		cin >> A;
+		if (A <= 0 || A > 2){//If the user enters numbers outside of the parameters
+			cout << endl << "Goodbye!" << endl;
+			system("pause");
+			return 0;//Exit the program
+		}
+		switch (A){
+		case 1://If the user wants to put in a new word
+			if (I > 25){//If you have reached the max number of words
+				cout << "Sorry, you can't make any new words!" << endl << endl;
+				break;
+			}
+			else{
+				cout << "Enter the new word now: " << endl << endl;//Prompt user for new word
+				cin >> newWord;
+				array[I].setWord(newWord);//New word is put into the array
+				I++;		
+			break; 
+			}
+		case 2:
+			int randArrayPosition = rand() % I;//Pick a random position from the array; later we use the word from this position
+			int length = array[randArrayPosition].getStringLength();//Find the length of the word; make sure to have brackets!
+			char* outputArray = new char[length];//Make a new array of the same length as the word
+			for (int counter2 = 0; counter2 < length; counter2++){
+				outputArray[counter2] = '-';
+			}
+				int triesLeft;//Keeps track of the tries left
+				int *ptriesLeft;//Pointer to the tries left
+				cout << endl << endl << "How many tries do you want? ";
+				cin >> triesLeft;
+
+			printWordplusBlanks(outputArray, length);
+			askAgain:
+			char userGuess;//Variable that takes in user's guess 
+			cout << endl << "You have " << triesLeft << " tries left. Guess letter (Press a number to quit) " ;			
+			cin >> userGuess;
+				if ((userGuess <= '9' && userGuess >= '0') || triesLeft == 0){
+					cout << "Game over." << endl << endl;
+					goto beginning;//Go back to the main menu
+				}
+				else{
+					triesLeft--;
+					checkForMatches(outputArray, (array[randArrayPosition]).returnWord(), userGuess, length, &triesLeft);
+					 char* copyofWord = array[randArrayPosition].returnWord();
+					 if (Winner(outputArray, copyofWord, length)){
+						 goto beginning;//If the user has gotten all the letters, go back to the very beginning
+					 }
+					else goto askAgain;//If the user still needs to guess more letters to win, ask again
+				}
+			break;
+			}		
+	} while (A > 0 && A <= 2);
+
+	system("pause");
+	return 0;
+}
