@@ -1,9 +1,8 @@
 #include<iostream>
 #include<iomanip>
 #include<cstdlib>
-#include<string.h>
 #include<string>
-#include<math.h>
+#include<ctime>
 
 using namespace std;
 
@@ -106,6 +105,7 @@ int main(){
 			break; 
 			}
 		case 2:
+			srand(time(0));//Use srand to seed a random number 
 			int randArrayPosition = rand() % I;//Pick a random position from the array; later we use the word from this position
 			int length = array[randArrayPosition].getStringLength();//Find the length of the word; make sure to have brackets!
 			char* outputArray = new char[length];//Make a new array of the same length as the word
