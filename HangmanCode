@@ -88,8 +88,6 @@ int main(){
 		cin >> A;
 		if (A <= 0 || A > 2){//If the user enters numbers outside of the parameters
 			cout << endl << "Goodbye!" << endl;
-			system("pause");
-			return 0;//Exit the program
 		}
 		switch (A){
 		case 1://If the user wants to put in a new word
@@ -140,5 +138,6 @@ int main(){
 	} while (A > 0 && A <= 2);
 
 	system("pause");
+	delete [26] array;
 	return 0;
 }
