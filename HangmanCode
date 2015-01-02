@@ -3,6 +3,7 @@
 #include<cstdlib>
 #include<string>
 #include<ctime>
+//Copyright, Amrit Kumar Prasad (No duplication allowed without written permission given)
 
 using namespace std;
 
